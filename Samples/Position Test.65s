@@ -1,0 +1,51 @@
+; char position in terminal window
+
+io_putc = $e001
+io_puth = $e003
+io_posx = $e005
+io_posy = $e006
+
+	*= $600
+
+	LDY #9
+	LDX #'X'
+
+loop:
+	; display 'X' in (2*y,y) position
+
+	STY io_posy
+	TYA
+	ASL
+	STA io_posx
+
+	LDA #'X'
+	STA io_putc
+
+	; read current pos and store it
+	LDA io_posy
+	PHA
+	LDA io_posx
+	PHA
+
+	; reposition cursor
+	LDX #20
+	STX io_posx
+	LDA #0
+	STA io_posy
+
+	; display stored position
+	PLA
+	STA io_puth
+
+	STX io_posx
+	LDA #1
+	STA io_posy
+
+	PLA
+	STA io_puth
+
+	; repeat
+	DEY
+	BPL loop
+
+	BRK

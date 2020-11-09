@@ -1,0 +1,16 @@
+; Memory protection:
+;
+; if enbled in Options dlg write attempt to protected area will fail)
+
+
+	*= $600
+
+	LDA #0
+	STA $8000
+	TAX
+	LDA #$ff
+.loop	STA $bf80,X
+	INX
+	BNE .loop
+
+	BRK

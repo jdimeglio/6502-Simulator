@@ -1,0 +1,46 @@
+	.ORG $1000
+	
+makro	.MACRO a,b
+	.IF a==0
+	CLC
+	.ELSE
+	.IF a==1
+	SEC
+	.ELSE
+	.IF a==2
+	NOP
+	.ENDIF
+	.ENDIF
+	.ENDIF
+	LDA #1
+;	BRK
+	RTS
+	.DB $ff
+
+
+	.DB a,b,%[b-2]$
+	.EXITM
+	NOP
+	.ENDM
+	
+	NOP
+tam	gucio 1,2
+tutaj	NOP
+
+	.START tutaj
+	.START tam
+
+
+test	.MACRO s
+	JSR $4000
+	.WORD s
+	.db s$
+	.ENDM
+
+
+
+
+	*= $2000
+	
+	test "34"
+	BRK

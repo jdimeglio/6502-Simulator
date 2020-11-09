@@ -1,0 +1,29 @@
+; test
+
+	*= $2000
+
+	JSR _print_string
+	.STR "Test", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "LineX", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line", $d, $a, "Line"
+	NOP
+	LDX #<msg
+	LDA #>msg
+	JSR _print_string_addr
+
+	LDA #$4a
+	sta _io_base+1
+	STA _io_base+2
+	STA _io_base+3
+
+	JSR _print_string
+	.STR $d, $a, $d, $a, "Input data: "
+
+	LDA _io_base+4
+	STA _io_base+1
+
+	BRK
+
+msg:	.STR "ABC"
+	.STR ""
+	NOP
+
+	.INCLUDE "lib.65s"

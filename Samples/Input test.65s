@@ -1,0 +1,28 @@
+; Wait for input test
+
+; IO area of the simulator has to be set at the address $e000
+; (Option/Simulator/InOut memory area)
+; In/Out Window will only accept input when it has focus (is active)
+
+	*= $0600
+
+io_area	= $e000
+io_cls	= io_area + 0	; clear terminal window
+io_putc	= io_area + 1	; put char
+io_putr	= io_area + 2	; put raw char (doesn't interpret CR/LF)
+io_puth	= io_area + 3	; put as hex number
+io_getc	= io_area + 4	; get char
+
+	LDA #$a
+	STA io_putc	; this will move cursor to the next line
+	STA io_putr	; this will print character
+
+	LDA #'>'
+	STA io_putc
+.wait
+	LDA io_getc
+	BEQ .wait
+	STA io_puth
+	JMP .wait
+
+	BRK

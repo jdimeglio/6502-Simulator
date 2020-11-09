@@ -1,0 +1,71 @@
+; interrupt test
+
+io_area	= $e000
+io_cls	= io_area + 0	; clear terminal window
+io_putc	= io_area + 1	; put char
+io_putr	= io_area + 2	; put raw char (doesn't interpret CR/LF)
+io_puth	= io_area + 3	; put as hex number
+io_getc	= io_area + 4	; get char
+
+
+	*= $600
+
+
+	LDX #0
+	LDY #0
+	STX $80
+	STX $81
+loop
+	INX
+	BNE loop
+	INY
+	BNE loop
+	INC $80
+	BNE loop
+	INC $81
+	BNE loop
+
+	BRK
+
+
+irq
+	PHA
+	STY io_puth
+	STX io_puth
+	LDA #' '
+	STA io_putc
+	PLA
+	RTI
+
+nmi
+	PHA
+	LDA #'N'
+	STA io_putc
+	LDA #'M'
+	STA io_putc
+	LDA #'I'
+	STA io_putc
+	LDA #$d
+	STA io_putc
+	LDA #$a
+	STA io_putc
+	PLA
+	RTI
+
+reset
+	LDA #'S'
+	STA io_putc
+	LDA #'t'
+	STA io_putc
+	LDA #'o'
+	STA io_putc
+	LDA #'p'
+	STA io_putc
+	BRK
+
+
+	; Iterrupt table
+	*= $fffa
+	.DW nmi
+	.DW reset
+	.DW irq

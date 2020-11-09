@@ -1,0 +1,135 @@
+; Przyk³ad biblioteki dla 6502
+
+
+_print_addr	= $80
+_print_cnt	= $82
+_io_base	= $E000
+_io_cls		= _io_base + 0
+_io_put		= _io_base + 1
+
+
+;====================================================================
+; procedura drukowania ³añcucha znaków zapisanych w kodzie programu
+; parametry: ³añcuch znaków w kodzie programu,
+;  w pierwszym bajcie iloœæ znaków w ³añcuchu
+
+	.IF .REF(_print_string)
+
+_print_string:
+	PLA
+	STA _print_addr	; adres ³añcucha znaków
+	PLA
+	STA _print_addr + 1
+	LDY #1
+	LDA (_print_addr),y
+	STA _print_cnt
+	BEQ .fin		; nie ma znaków?
+	BNE .skip
+.put_char:
+	DEC _print_cnt
+	BEQ .fin
+.skip:	LDY #2
+	LDA (_print_addr),y
+	JSR _put_char
+.inc:	INC _print_addr
+	BNE .put_char
+	INC _print_addr + 1
+	BNE .put_char
+.fin:
+	CLC
+	LDA _print_addr		; przywrócenie adresu powrotu
+	ADC #1
+	TAY
+	LDA _print_addr+1
+	ADC #0
+	PHA
+	TYA
+	PHA
+	RTS
+
+	.ENDIF
+
+
+;====================================================================
+; procedura drukowania ³añcucha znaków o danym adresie
+; parametry: adres ³añcucha znaków X/A (m³odszy/starszy bajt),
+; w pierwszym bajcie ³añcucha podana iloœæ znaków w ³añcuchu
+
+	.IF .REF(_print_string_addr)
+
+_print_string_addr:
+	STX _print_addr
+	STA _print_addr+1
+	LDY #0
+	LDA (_print_addr),y
+	BEQ .fin
+	STA _print_cnt
+	BNE .skip
+.put_char:
+	DEC _print_cnt
+	BEQ .fin
+.skip:	LDY #1
+	LDA (_print_addr),y
+	JSR _put_char
+.inc:	INC _print_addr
+	BNE .put_char
+	INC _print_addr
+	BNE .put_char
+.fin:
+	RTS
+
+	.ENDIF
+
+
+;====================================================================
+; procedura drukowania liczb szesnastkowych (00-FF)
+; parametry: liczba w akumulatorze
+
+	.IF .REF(_put_hex_byte)
+
+_put_hex_byte:	; wydrukowanie liczby z akumulatora jako hex
+	PHA
+	LSR
+	LSR
+	LSR
+	LSR
+	JSR .hex
+	PLA
+	AND #$0F
+.hex	ORA #'0'
+	CMP #'0'+10
+	BCC .skip
+	ADC #'A'-'0'-11
+.skip	JSR _put_char
+	RTS
+
+	.ENDIF
+
+
+;====================================================================
+; procedura drukowania liczb szesnastkowych (0000-FFFF)
+; parametry: liczba w X/A (m³odszy/starszy bajt)
+
+	.IF .REF(_put_hex_word)
+_put_hex_word:
+	PHA
+	TXA
+	JSR _put_hex_byte
+	PLA
+	JSR _put_hex_word
+	RTS
+
+	.ENDIF
+
+
+;====================================================================
+; procedura drukowania pojedynczych znaków
+; parametry: znak w akumulatorze
+
+	.IF .REF(_put_char)
+
+_put_char:
+	STA _io_put
+	RTS
+
+	.ENDIF

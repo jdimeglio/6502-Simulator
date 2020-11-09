@@ -1,0 +1,25 @@
+
+	*= $600
+
+io_putc	= $e001
+io_posx	= $e005
+io_posy	= $e006
+
+	LDA #9
+	STA io_posx
+	LDA #2
+	STA io_posy
+
+	; print 'aaa'
+	LDA #'a'
+	STA io_putc
+	STA io_putc
+	STA io_putc
+
+	; print backspace three times erasing a's
+	LDA #8
+	STA io_putc
+	STA io_putc
+	STA io_putc
+
+	BRK
