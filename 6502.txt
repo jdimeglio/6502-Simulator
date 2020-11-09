@@ -1,0 +1,15 @@
+http://exifpro.com/utils.html
+
+Then with io-area = the start address you can access the following..
+
+io_cls = io_area + 0 - writing to this clears the output window
+io_putc = io_area + 1 - a "glass teletype" output window. Backspace,
+CR and LF are actioned
+io_putr = io_area + 2 - raw output, bytes are output as their
+characters and not actioned.
+io_puth = io_area + 3 - hex output, bytes are output as their hex code
+io_getc = io_area + 4 - halting character get, will wait for input
+io_posx = io_area + 5 - set cursor x position by writing here
+io_posy = io_area + 6 - set cursor y position by writing here
+
+It's not a comprehensive I/O function but it does allow monitor code and even high level languages to be run.
