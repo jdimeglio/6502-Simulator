@@ -6,5 +6,5 @@ I've included it here for ease of access.
 Kevin Wilson contributed documents describing 6502 architecture, basics of using the simulator plus exercises. 
 Those documents are free for any educational or nonprofit activity.
 
-Lots more info here: http://forum.6502.org/viewtopic.php?f=8&t=5011&start=105
+Lots more info here:https://sbc.rictor.org/kowalski.html
 
